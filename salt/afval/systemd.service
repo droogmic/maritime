@@ -1,0 +1,6 @@
+[Unit]
+Description=Afvalkalendar Notification
+
+[Service]
+ExecStart=/home/{{ pillar['user'] }}/.cache/afval/venv/bin/python /home/{{ pillar['user'] }}/.cache/afval/notification.py {{ pillar['postcode'] }} {{ pillar['housenumber'] }}
+Type=oneshot
