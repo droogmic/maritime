@@ -1,5 +1,16 @@
 {% if pillar['user'] %}
 syncthing:
+  file.managed:
+    - user: {{ pillar['user'] }}
+    - group: {{ pillar['user'] }}
+    - template: jinja
+    - names:
+      - /home/{{ pillar['user'] }}/.bashrc
+        - source: salt://personal/.basrhc
+{% endif %}
+
+{% if pillar['user'] %}
+syncthing:
   pkg:
     - installed
   service.running:
