@@ -1,12 +1,15 @@
 {% if pillar['user'] %}
-syncthing:
+dotfiles:
   file.managed:
     - user: {{ pillar['user'] }}
     - group: {{ pillar['user'] }}
+    - makedirs: true
     - template: jinja
     - names:
-      - /home/{{ pillar['user'] }}/.bashrc
-        - source: salt://personal/.basrhc
+      - /home/{{ pillar['user'] }}/.bashrc:
+        - source: salt://personal/bashrc
+      - /home/{{ pillar['user'] }}/.config/git/config:
+        - source: salt://personal/gitconfig
 {% endif %}
 
 {% if pillar['user'] %}

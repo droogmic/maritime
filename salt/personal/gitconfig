@@ -1,0 +1,12 @@
+[user]
+    email = {{ pillar['email'] }}
+    name = {{ pillar['fullname'] }}
+[init]
+    defaultBranch = main
+
+[color "status"]
+    branch = magenta
+    untracked = cyan
+    unmerged = yellow
+[alias]
+    pushf = push --force-with-lease
