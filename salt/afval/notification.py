@@ -96,10 +96,12 @@ def main():
 
     if (next_collection.date - dt.date.today()) < dt.timedelta(days=2):
         summary = f"Upcoming: {next_collection.type}"
+        urgent = False
         if next_collection.date == dt.date.today():
             summary = f"Today: {next_collection.type}"
+            urgent = True
         body = "\n".join([str(cd) for cd in future_collections[:3]])
-        send_notification(summary, body)
+        send_notification(summary, body, urgent)
 
 
 if __name__ == "__main__":

@@ -2,3 +2,4 @@ base:
   '*':
     - devenv
     - personal
+    - vim

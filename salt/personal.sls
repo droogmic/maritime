@@ -31,19 +31,24 @@ afvalkalendar:
         - source: salt://afval/systemd.timer
       - /home/{{ pillar['user'] }}/.cache/afval/notification.py:
         - source: salt://afval/notification.py
-      - /home/{{ pillar['user'] }}/.cache/afval/tempvenv:
-        - source: salt://afval/tempvenv
-        - mode: '0755'
+      # for normal salt
+      #- /home/{{ pillar['user'] }}/.cache/afval/tempvenv:
+      #  - source: salt://afval/tempvenv
+      #  - mode: '0755'
   virtualenv.managed:
     - name: /home/{{ pillar['user'] }}/.cache/afval/venv
-    - venv_bin: /home/{{ pillar['user'] }}/.cache/afval/tempvenv
+    # for normal salt
+    #- venv_bin: /home/{{ pillar['user'] }}/.cache/afval/tempvenv
+    - provider: venv
     - pip_upgrade: true
     - pip_pkgs: ['beautifulsoup4', 'requests']
+    - user: {{ pillar['user'] }}
   cmd.run:
     - names:
       - 'systemctl --user daemon-reload'
       - 'systemctl --user enable afval.timer'
       - 'systemctl --user start afval.service'
+    - runas: {{ pillar['user'] }}
     - env:
       - DBUS_SESSION_BUS_ADDRESS: unix:path=/run/user/{{ uid }}/bus
     - onchanges:
