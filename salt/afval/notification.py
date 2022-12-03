@@ -2,12 +2,17 @@ import datetime as dt
 import locale
 import requests
 import subprocess
+import logging
 
 from bs4 import BeautifulSoup
 from contextlib import contextmanager
 
+logger = logging.getLogger(__name__)
+
+
 def url(postcode: str, housenumber: str) -> str:
     return f"https://www.mijnafvalwijzer.nl/en/{postcode}/{housenumber}/"
+
 
 @contextmanager
 def override_locale(category, locale_string):
@@ -66,11 +71,13 @@ class CollectionDay:
 def main():
 
     import argparse
+
     parser = argparse.ArgumentParser()
     parser.add_argument("postcode")
     parser.add_argument("housenumber")
     args = parser.parse_args()
 
+    logging.basicConfig(level=logging.INFO)
 
     response = requests.get(url(args.postcode, args.housenumber))
     soup = BeautifulSoup(response.text, "html.parser")
@@ -79,6 +86,7 @@ def main():
     first_type_nl = first_collection_day_div.find("p", class_="firstWasteType").string
     first_date_nl = first_collection_day_div.find("p", class_="firstDate").string
     next_collection = CollectionDay(first_date_nl, first_type_nl)
+    logger.info("The next collection day is %s", next_collection)
 
     collection_days_div = soup.find("div", class_="ophaaldagen")
 
@@ -89,8 +97,12 @@ def main():
         ]
     )
     future_collections = [cd for cd in collection_days if cd.date > dt.date.today()]
+    logger.info("The future collection days are %s", future_collections)
 
-    if next_collection.date != future_collections[0].date and next_collection.date != dt.date.today():
+    if (
+        next_collection.date != future_collections[0].date
+        and next_collection.date != dt.date.today()
+    ):
         send_notification("Script Error")
         raise Exception(f"{next_collection}, {future_collections}")
 
@@ -102,6 +114,7 @@ def main():
             urgent = True
         body = "\n".join([str(cd) for cd in future_collections[:3]])
         send_notification(summary, body, urgent)
+        logger.info("Notification sent: %s\n%s", summary, body)
 
 
 if __name__ == "__main__":

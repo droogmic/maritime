@@ -10,6 +10,15 @@ dotfiles:
         - source: salt://personal/bashrc
       - /home/{{ pillar['user'] }}/.config/git/config:
         - source: salt://personal/gitconfig
+dotfiles-header:
+  file.prepend:
+    - require:
+      - dotfiles
+    - names:
+      - /home/{{ pillar['user'] }}/.bashrc:
+        - text: '# DO NOT CHANGE - MANAGED BY SALT'
+      - /home/{{ pillar['user'] }}/.config/git/config:
+        - text: '# DO NOT CHANGE - MANAGED BY SALT'
 {% endif %}
 
 {% if pillar['user'] %}
@@ -67,6 +76,17 @@ afvalkalendar:
       - DBUS_SESSION_BUS_ADDRESS: unix:path=/run/user/{{ uid }}/bus
     - onchanges:
       - file: afvalkalendar
+afvalkalendar-header:
+  file.prepend:
+    - require:
+      - afvalkalendar
+    - names:
+      - /home/{{ pillar['user'] }}/.config/systemd/user/afval.service:
+        - text: '# DO NOT CHANGE - MANAGED BY SALT'
+      - /home/{{ pillar['user'] }}/.config/systemd/user/afval.timer:
+        - text: '# DO NOT CHANGE - MANAGED BY SALT'
+      - /home/{{ pillar['user'] }}/.cache/afval/notification.py:
+        - text: '# DO NOT CHANGE - MANAGED BY SALT'
 {% else %}
 {{ raise('missing user ' + pillar['user']) }}
 {% endif %}

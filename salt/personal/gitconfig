@@ -8,5 +8,7 @@
     branch = magenta
     untracked = cyan
     unmerged = yellow
+[core]
+    excludesfile = /home/droogmic/.global_gitignore
 [alias]
     pushf = push --force-with-lease
